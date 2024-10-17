@@ -5,26 +5,22 @@
 using namespace gen;
 
 
-Texture::Texture(bool empty, unsigned int ID)
-	: empty(empty), ID(ID)
+Texture::Texture(unsigned int ID)
+	: ID(ID)
 {}
 
 void Texture::copyFrom(std::unique_ptr<Texture> other)
 {
-	empty = other->empty;
 	ID = other->ID;
 }
 	
 unsigned int Texture::getID() { return ID; }
 
-bool Texture::isEmpty() { return empty; }
-
 std::unique_ptr<Texture> Texture::newTexture(GLTexture* glTexture)
 {
-	return std::make_unique<Texture>(false, glTexture->getID());	
-
+	return std::make_unique<Texture>(glTexture->getID());	
 }
 
 Texture Texture::emptyTexture() {
-	return Texture(true, 0);
+	return Texture(0);
 }

@@ -79,3 +79,8 @@ void ShaderProgram::setUniform(const char *name, Mat4 value) {
 	GLint location = glGetUniformLocation(ID, name);
 	glUniformMatrix4fv(location, 1, GL_FALSE, value.toArray());
 }
+
+void ShaderProgram::setUniform(const char *name, Vec4 value) {
+	GLint location = glGetUniformLocation(ID, name);
+	glUniform4f(location, value.x, value.y, value.z, value.w);
+}

@@ -2,6 +2,7 @@
 #include "Math.h"
 #include "ShaderProgram.h"
 #include "GLTexture.h"
+#include "TexturedModel.hpp"
 #include "VAO.h"
 #include "Model.h"
 #include "Texture.h"
@@ -57,51 +58,69 @@ void Renderer::render(Model *model)
 	shader->setUniform("MVPMatrix", MVPMatrix);
 	
 	VAO::bind(model->getMesh()->getID());
-	glDrawElements(GL_TRIANGLES, model->getMesh()->getVericesCount(), GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_TRIANGLES, model->getMesh()->getVerticesCount(), GL_UNSIGNED_SHORT, 0);
 	VAO::unbind();
 }
 
-void Renderer::render(Model models[], int count)
+void Renderer::render(ColoredModel models[], int count)
 {
 	Mat4 projectionMatrix = Mat4::projectionMatrix_perspective(0.01f, 100.0f, 70.0f, 1280.0f/720);
 	Mat4 viewMatrix = Mat4::viewMatrix(new float[] {0,0,-1}, new float[] {0,0,0});
 	for (int i = 0; i < count; i++) {
-		Model *model = &models[i];
-		if (model->isEmpty()) continue;
+		ColoredModel *model = &models[i];
+		// if (model->isEmpty()) continue;
+		Mat4 modelMatrix = Mat4::modelMatrix(model->getTransform()->getLocation(), model->getTransform()->getRotation(), model->getTransform()->getScale());
+		Mat4 MVPMatrix = Mat4::multiply(projectionMatrix, Mat4::multiply(viewMatrix, modelMatrix) );
+		shader->setUniform("MVPMatrix", MVPMatrix);
+		shader->setUniform("Color", {model->getColor()->red, model->getColor()->green, model->getColor()->blue, model->getColor()->alpha});
+
+		VAO::bind(model->getMesh()->getID());
+		
+		glDrawElements(GL_TRIANGLES, model->getMesh()->getVerticesCount(), GL_UNSIGNED_SHORT, 0);
+		
+		VAO::unbind();
+	}
+}
+
+void Renderer::render(TexturedModel models[], int count)
+{
+	Mat4 projectionMatrix = Mat4::projectionMatrix_perspective(0.01f, 100.0f, 70.0f, 1280.0f/720);
+	Mat4 viewMatrix = Mat4::viewMatrix(new float[] {0,0,-1}, new float[] {0,0,0});
+	for (int i = 0; i < count; i++) {
+		TexturedModel *model = &models[i];
+		// if (model->isEmpty()) continue;
 		Mat4 modelMatrix = Mat4::modelMatrix(model->getTransform()->getLocation(), model->getTransform()->getRotation(), model->getTransform()->getScale());
 		Mat4 MVPMatrix = Mat4::multiply(projectionMatrix, Mat4::multiply(viewMatrix, modelMatrix) );
 		shader->setUniform("MVPMatrix", MVPMatrix);
 		
-		if (!model->getMesh()->isEmpty()) {
-			VAO::bind(model->getMesh()->getID());
-			if (!model->getTexture()->isEmpty()) GLTexture::bind(model->getTexture()->getID());
-			
-			glDrawElements(GL_TRIANGLES, model->getMesh()->getVericesCount(), GL_UNSIGNED_SHORT, 0);
-			
-			GLTexture::unbind();
-			VAO::unbind();
-		}
+		VAO::bind(model->getMesh()->getID());
+		GLTexture::bind(model->getTexture()->getID());
+		
+		glDrawElements(GL_TRIANGLES, model->getMesh()->getVerticesCount(), GL_UNSIGNED_SHORT, 0);
+		
+		GLTexture::unbind();
+		VAO::unbind();
 	}
 }
 
-void Renderer::renderGui(Model guiElements[], int count)
-{
-	for (int i = 0; i < count; i++) {
-		Model *model = &guiElements[i];
+// void Renderer::renderGui(Model guiElements[], int count)
+// {
+// 	for (int i = 0; i < count; i++) {
+// 		Model *model = &guiElements[i];
 
-		Mat4 modelMatrix = Mat4::modelMatrix(model->getTransform()->getLocation(), model->getTransform()->getRotation(), model->getTransform()->getScale());
-		shader->setUniform("ModelMatrix", modelMatrix);
-		if (!model->getMesh()->isEmpty()) {
-			VAO::bind(model->getMesh()->getID());
-			if (!model->getTexture()->isEmpty()) GLTexture::bind(model->getTexture()->getID());
+// 		Mat4 modelMatrix = Mat4::modelMatrix(model->getTransform()->getLocation(), model->getTransform()->getRotation(), model->getTransform()->getScale());
+// 		shader->setUniform("ModelMatrix", modelMatrix);
+// 		if (!model->getMesh()->isEmpty()) {
+// 			VAO::bind(model->getMesh()->getID());
+// 			if (!model->getTexture()->isEmpty()) GLTexture::bind(model->getTexture()->getID());
 			
-			glDrawElements(GL_TRIANGLES, model->getMesh()->getVericesCount(), GL_UNSIGNED_SHORT, 0);
+// 			glDrawElements(GL_TRIANGLES, model->getMesh()->getVericesCount(), GL_UNSIGNED_SHORT, 0);
 			
-			GLTexture::unbind();
-			VAO::unbind();
-		}
-	}
-}
+// 			GLTexture::unbind();
+// 			VAO::unbind();
+// 		}
+// 	}
+// }
 
 void Renderer::clearScreen()
 {

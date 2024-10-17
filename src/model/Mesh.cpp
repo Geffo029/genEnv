@@ -10,10 +10,9 @@ using namespace gen;
 // 	std::cout << "Mesh CONSTRUCTOR called" << std::endl;
 // }
 
-Mesh::Mesh(bool empty, unsigned int ID, unsigned int verticesCount)
+Mesh::Mesh(unsigned int ID, unsigned int verticesCount)
 {
 	// std::cout << "Mesh CONSTRUCTOR called" << std::endl;	
-	this->empty = empty;
 	this->ID = ID;
 	this->verticesCount = verticesCount;
 }
@@ -33,22 +32,13 @@ void Mesh::newFrom(Mesh &&other)
 
 void Mesh::copyFrom(std::unique_ptr<Mesh> other)
 {
-	empty = other->empty;
 	ID = other->ID;
     verticesCount = other->verticesCount;
 }
 
-bool Mesh::isEmpty() { return empty; }
+unsigned int Mesh::getID() { return ID; }
 
-unsigned int Mesh::getID()
-{
-	return ID;
-}
-
-unsigned int Mesh::getVericesCount()
-{
-	return verticesCount;
-}
+unsigned int Mesh::getVerticesCount() { return verticesCount; }
 
 Mesh::~Mesh()
 {
@@ -57,12 +47,12 @@ Mesh::~Mesh()
 
 std::unique_ptr<Mesh> Mesh::newMesh(VAO *vao)
 {
-	return std::make_unique<Mesh>(false, vao->getID(), vao->getElementCount());	
+	return std::make_unique<Mesh>(vao->getID(), vao->getElementCount());	
 	// Mesh *mesh = new Mesh(false, vao->getID(), vao->getElementCount());
 	// return mesh;	
 }
 
 Mesh Mesh::emptyMesh()
 {
-	return Mesh(true, 0, 0);
+	return Mesh(0, 0);
 }

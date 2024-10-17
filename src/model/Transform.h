@@ -10,15 +10,17 @@ namespace gen {
 	class Transform {
 	
 	private:
-		bool empty;
+		// bool empty;
 		float location[3];
 		float rotation[4];
 		float scale[3];
-		// Transform();
+		// float loc_x, loc_y, loc_z;
+		// float rot_x, rot_y, rot_z, rot_w;
+		// float sca_x, sca_y, sca_z;
 	
 	public:
 		// Transform(Transform&&);
-		Transform(bool, float, float, float, float, float, float, float, float, float, float);
+		Transform(float, float, float, float, float, float, float, float, float, float);
 		void newFrom(Transform&&);
 		void copyFrom(std::unique_ptr<Transform>);
 		void setLocation(float, float, float);
@@ -27,7 +29,6 @@ namespace gen {
 		float* getLocation();
 		float* getRotation();
 		float* getScale();
-		bool isEmpty();
 		~Transform();
 
 		static std::unique_ptr<Transform> newTransform();

@@ -7,9 +7,10 @@
 #include <utility>
 
 // L'ordine degli include e importante
-#include "RawData.h"
+
 #include "ShaderProgram.h"
 #include "GLTexture.h"
+#include "TexturedModel.hpp"
 #include "VAO.h"
 #include "Renderer.h"
 #include "Clock.h"
@@ -20,8 +21,9 @@
 #include "Model.h"
 #include "Texture.h"
 #include "Transform.h"
+#include "Color.hpp"
+#include "ColoredModel.hpp"
 #include "RawData.h"
-
 
 
 
@@ -35,7 +37,8 @@ private:
 
 	gen::Clock *clock;
 	gen::Window *window;
-	gen::ShaderProgram *shader;
+	gen::ShaderProgram *colorShader;
+	gen::ShaderProgram *textureShader;
 	gen::Renderer *renderer;
 
 	// gen::Transform *transform;
@@ -44,6 +47,7 @@ private:
 	gen::Model *plane;
 	std::unique_ptr<gen::Transform> planeTransform;
 	std::unique_ptr<gen::Mesh> planeMesh;
+	std::unique_ptr<gen::Color> planeColor;
 	gen::Model *die;
 	std::unique_ptr<gen::Transform> dieTransform;
 	std::unique_ptr<gen::Mesh> dieMesh;
@@ -60,36 +64,29 @@ public:
 		
 		gen::OpenGL::init(); //TODO: deve essere chiamato dopo la creazione di una finestra. Questa cosa deve FINIRE!!
 
-		shader = new gen::ShaderProgram();
-		shader->addVertexShader("../res/shaders/VS_texturedModel.glsl"); // From ./build directory
-		shader->addFragmentShader("../res/shaders/FS_texturedModel.glsl");
-		shader->link();
+		colorShader = new gen::ShaderProgram();
+		colorShader->addVertexShader("../res/shaders/VS_coloredModel.glsl");
+		colorShader->addFragmentShader("../res/shaders/FS_coloredModel.glsl");
+		colorShader->link();
+		textureShader = new gen::ShaderProgram();
+		textureShader->addVertexShader("../res/shaders/VS_texturedModel.glsl"); // From ./build directory
+		textureShader->addFragmentShader("../res/shaders/FS_texturedModel.glsl");
+		textureShader->link();
 
 		renderer = new gen::Renderer();
-		renderer->setShader(shader);
 		
 		clock = new gen::Clock();
 		clock->setEvent("SHOW FPS", 2.);
 		
-		gen::obj::data objData = gen::obj::readFile("../res/plane.obj");
-
-		planeMesh = gen::Mesh::newMesh(new gen::VAO(objData));
 		planeTransform = gen::Transform::newTransform(0,1,2, 90,0,0,1, 1,1,1);
-		plane = gen::Model::newModel(std::move(planeTransform), std::move(planeMesh));
+		planeMesh = gen::Mesh::newMesh(new gen::VAO(gen::obj::readFile("../res/plane.obj")));
+		planeColor = gen::Color::newColor(1, 0, 0, 0);
+		plane = gen::ColoredModel::newModel(std::move(planeTransform), std::move(planeMesh), std::move(planeColor));
 		
-		objData = gen::obj::readFile("../res/die.obj");
-		gen::image::data textureData = gen::image::readFile("../res/dieTexture.png");
 		dieTransform = gen::Transform::newTransform(0,-1,5, 0,0,0,1, 1,1,1);
-		dieMesh = gen::Mesh::newMesh(new gen::VAO(objData));
-		dieTexture = gen::Texture::newTexture(new gen::GLTexture(textureData));
-
-		die = gen::Model::newModel();
-		die->addTransform(std::move(dieTransform));
-		die->addMesh(std::move(dieMesh));
-		die->addTexture(std::move(dieTexture));
-
-		gen::obj::cleanup(objData);
-		gen::image::cleanup(textureData);
+		dieMesh = gen::Mesh::newMesh(new gen::VAO(gen::obj::readFile("../res/die.obj")));
+		dieTexture = gen::Texture::newTexture(new gen::GLTexture(gen::image::readFile("../res/dieTexture.png")));
+		die = gen::TexturedModel::newModel(std::move(dieTransform), std::move(dieMesh), std::move(dieTexture));
 	}
 
 	void update()
@@ -113,8 +110,7 @@ public:
 		if (clock->checkEventAndTrigger("SHOW FPS"))
 			std::cout << "FPS: " << 1/clock->deltaTime() << std::endl;
 		
-		plane->rotate(0, clock->deltaTime()*100, 0, 0);
-		// model->getTransform()->setRotation(0, std::sin(clock->getCurrentTime_micros()*0.000001)*180, 0, 1);
+		// plane->rotate(0, clock->deltaTime()*100, 0, 0);
 		plane->move(std::cos(clock->getCurrentTime_sec()*3.14) * 5 * clock->deltaTime(), 0, 0);
 
 		die->rotate(clock->deltaTime()*20, clock->deltaTime()*100, clock->deltaTime()*20, 0);
@@ -123,7 +119,10 @@ public:
 
 		// Render...
 		renderer->clearScreen();
-		renderer->render(gen::Model::modelsQueue(), gen::Model::modelsCount());
+		renderer->setShader(colorShader);
+		renderer->render(gen::ColoredModel::modelsArray(), gen::ColoredModel::modelsCount());
+		renderer->setShader(textureShader);
+		renderer->render(gen::TexturedModel::modelsArray(), gen::TexturedModel::modelsCount());
 		
 		window->swapbuffers();
 		gen::Glfw::pollEvents();

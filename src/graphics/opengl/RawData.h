@@ -22,6 +22,8 @@ namespace gen
 			unsigned short *f;
 			unsigned int fCount;
 			unsigned int fDimension;
+
+			~data();
 		};
 
 		data readFile(const char*);
@@ -39,6 +41,8 @@ namespace gen
 			int height;
 			int channelsCount;
 			unsigned char *pixels;
+
+			~data();
 		};
 
 		data readFile(const char*);

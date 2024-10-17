@@ -11,7 +11,7 @@ namespace gen {
 	class Mesh {
 	
 	private:
-		bool empty; 
+		// bool empty; 
 		unsigned int ID;
 		unsigned int verticesCount;
 		// VAO openGL_vao;
@@ -20,12 +20,11 @@ namespace gen {
 	
 	public:
 		// Mesh(Mesh&&);
-		Mesh(bool, unsigned int, unsigned int);
+		Mesh(unsigned int, unsigned int);
 		void newFrom(Mesh&&);
 		void copyFrom(std::unique_ptr<Mesh>);
 		unsigned int getID();
-		unsigned int getVericesCount();
-		bool isEmpty();
+		unsigned int getVerticesCount();
 		~Mesh();
 
 		

@@ -19,6 +19,7 @@ namespace gen {
 		void link();
 		void use();
 		void setUniform(const char *, Mat4);
+		void setUniform(const char *, Vec4);
 	};
 
 	

@@ -16,11 +16,12 @@ using namespace gen;
 
 
 unsigned int Model::lastFreeIndex = 1; //TODO: l'indice 0 sarebbe riservato agli oggetti vuoti. Cambiare e permette agli indici di essere negativi
-Model Model::renderQueue[5];
+// Model Model::models[5];
+Model Model::disabledModels[5];
 
 
 Model::Model() 
-	: empty(true), transform(Transform::emptyTransform()), mesh(Mesh::emptyMesh()), texture(Texture::emptyTexture()), index(0)
+	: transform(Transform::emptyTransform()), mesh(Mesh::emptyMesh())
 {
 	// std::cout << "Model EMPTY CONSTRUCTOR called" << std::endl;	
 }
@@ -57,13 +58,11 @@ void Model::rescale(float delta_x, float delta_y, float delta_z)
 	transform.setScale(scale[0] + delta_x, scale[1] + delta_y, scale[2] + delta_z);
 }
 
-bool Model::isEmpty() { return empty; }
-
 Transform* Model::getTransform() { return &this->transform; }
 
 Mesh* Model::getMesh() { return &this->mesh; }
 
-Texture* Model::getTexture() { return &this->texture; }
+// Texture* Model::getTexture() { return &this->texture; }
 
 
 void Model::addTransform(std::unique_ptr<Transform> transform)
@@ -76,44 +75,41 @@ void Model::addMesh(std::unique_ptr<Mesh> mesh)
 	this->mesh.copyFrom(std::move(mesh));
 }
 
-void Model::addTexture(std::unique_ptr<Texture> texture)
-{
-	this->texture.copyFrom(std::move(texture));
-}
+// void Model::addTexture(std::unique_ptr<Texture> texture)
+// {
+// 	this->texture.copyFrom(std::move(texture));
+// }
 
 Model::~Model()
 {
 	// std::cout << "Model DESTRUCTOR called" << std::endl;	
 }
 
-Model* Model::newModel() {
-	Model *currentModel = &renderQueue[lastFreeIndex];
-	currentModel->empty = false;
-	lastFreeIndex++;
-	return currentModel;
-}
+// Model* Model::newModel() {
+// 	Model *currentModel = &models[lastFreeIndex];
+// 	lastFreeIndex++;
+// 	return currentModel;
+// }
 
-Model* Model::newModel(Transform &&transform, Mesh &&mesh)
-{
-	unsigned int currentIndex = lastFreeIndex;
-	renderQueue[currentIndex].empty = false;
-	renderQueue[currentIndex].transform.newFrom(std::move(transform));
-	renderQueue[currentIndex].mesh.newFrom(std::move(mesh));
-	lastFreeIndex++;
-	return &renderQueue[currentIndex];
-}
+// Model* Model::newModel(Transform &&transform, Mesh &&mesh)
+// {
+// 	unsigned int currentIndex = lastFreeIndex;
+// 	models[currentIndex].transform.newFrom(std::move(transform));
+// 	models[currentIndex].mesh.newFrom(std::move(mesh));
+// 	lastFreeIndex++;
+// 	return &models[currentIndex];
+// }
 
-Model* Model::newModel(std::unique_ptr<Transform> transform, std::unique_ptr<Mesh> mesh)
-{
-	// unsigned int currentIndex = lastFreeIndex;
-	Model *currentModel = &renderQueue[lastFreeIndex];
-	currentModel->empty = false;
-	currentModel->transform.copyFrom(std::move(transform));
-	currentModel->mesh.copyFrom(std::move(mesh));
-	lastFreeIndex++;
-	return currentModel;
-	// return std::shared_ptr<Model>( &renderQueue[currentIndex]);
-}
+// Model* Model::newModel(std::unique_ptr<Transform> transform, std::unique_ptr<Mesh> mesh)
+// {
+// 	// unsigned int currentIndex = lastFreeIndex;
+// 	Model *currentModel = &models[lastFreeIndex];
+// 	currentModel->transform.copyFrom(std::move(transform));
+// 	currentModel->mesh.copyFrom(std::move(mesh));
+// 	lastFreeIndex++;
+// 	return currentModel;
+// 	// return std::shared_ptr<Model>( &renderQueue[currentIndex]);
+// }
 
 
 
@@ -135,6 +131,9 @@ Model* Model::newModel(std::unique_ptr<Transform> transform, std::unique_ptr<Mes
 // 	lastFreeIndex++;
 // }
 
-Model* Model::modelsQueue() { return renderQueue; }
+// Model* Model::getModelsArray() { return models; }
 
-unsigned int Model::modelsCount() { return lastFreeIndex; }
+// Model* Model::getTexturedModelsArray() { return texturedModels; }
+
+
+// unsigned int Model::modelsCount() { return lastFreeIndex; }

@@ -37,6 +37,8 @@ namespace gen {
 	};
 	
 	
-
+	struct Vec4 {
+		float x, y, z, w;
+	};
 
 } // namespace gen

@@ -84,6 +84,23 @@ obj::data obj::readFile(const char *ObjFile) {
 	return data;
 }
 
+obj::data::~data()
+{
+	vCount = 0;
+	vDimension = 0;
+	delete v;
+	vtCount = 0;
+	vtDimension = 0;
+	delete vt;
+	vnCount = 0;
+	vnDimension = 0;
+	delete vn;
+	fCount = 0;
+	fDimension = 0;
+	delete f;
+	f = nullptr;
+}
+
 void obj::cleanup(obj::data data)
 {
 	data.vCount = 0;
@@ -109,6 +126,16 @@ image::data image::readFile(const char *imageFile)
 	data.pixels = stbi_load(imageFile, &data.width, &data.height, &data.channelsCount, 0); 
 	return data;
 }
+
+image::data::~data()
+{
+	width = 0;
+	height = 0;
+	channelsCount = 0;
+	delete pixels;
+	pixels = nullptr;
+}
+
 
 void image::cleanup(image::data data)
 {

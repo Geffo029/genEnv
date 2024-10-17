@@ -9,10 +9,10 @@ namespace gen
 {
 
 	class GLTexture 
+	
 	{
 	private:
 		GLuint ID;
-
 
 	public:
 		GLTexture(image::data);
