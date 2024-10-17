@@ -2,7 +2,7 @@
 
 #include "VAO.h"
 #include "ShaderProgram.h"
-#include "components/Model.h"
+#include "Model.h"
 
 
 

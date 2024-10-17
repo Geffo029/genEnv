@@ -1,11 +1,10 @@
 #include "Renderer.h"
-#include "GuiElement.hpp"
 #include "Math.h"
 #include "ShaderProgram.h"
 #include "GLTexture.h"
 #include "VAO.h"
-#include "components/Model.h"
-#include "components/Texture.h"
+#include "Model.h"
+#include "Texture.h"
 #include <GL/glew.h>
 #include <iostream>
 

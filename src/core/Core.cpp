@@ -16,10 +16,10 @@
 #include "OpenGL.h"
 #include "Glfw.h"
 #include "Window.h"
-#include "components/Mesh.h"
-#include "components/Model.h"
-#include "components/Texture.h"
-#include "components/Transform.h"
+#include "Mesh.h"
+#include "Model.h"
+#include "Texture.h"
+#include "Transform.h"
 #include "RawData.h"
 
 

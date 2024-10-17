@@ -1,5 +1,5 @@
 #include "Model.h"
-#include "components/Texture.h"
+#include "Texture.h"
 #include <iostream>
 #include <memory>
 #include <utility>
